@@ -1,6 +1,5 @@
-package com.learning.zjs.wordcount;
+package wordcount;
 
-import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -11,15 +10,14 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 /**
  * 相当于一个yarn集群的客户端，需要在此封装我们的mr程序相关运行参数，指定jar包,最后提交给yarn
- *  执行：hadoop jar hadooptest-1.0-SNAPSHOT.jar wordcount.WordcountDriver /test/ /test/output/
+ * 执行：hadoop jar hadooptest-1.0-SNAPSHOT.jar wordcount.WordcountDriver /test/ /test/output/
+ *
  * @author ：yrewzjs
  * @date ：Created in 2019/10/13 15:48
  * @modified By：
  */
-public class WordcountDriver
-{
-    public static void main(String[] args) throws Exception
-    {
+public class WordcountDriver {
+    public static void main(String[] args) throws Exception {
         // 1 获取配置信息，或者job对象实例
         Configuration configuration = new Configuration();
         // 8 配置提交到yarn上运行,windows和Linux变量不一致

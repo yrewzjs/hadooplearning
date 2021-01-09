@@ -4,16 +4,14 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.learning.zjs</groupId>
+  <groupId>zjs</groupId>
   <artifactId>hadooplearning</artifactId>
-  <packaging>pom</packaging>
-  <version>1.0-SNAPSHOT</version>
-  <modules>
-    <module>mrlearning</module>
-  </modules>
+  <version>1.0.0</version>
+  <description>hdfs client cli for java</description>
+  <packaging>jar</packaging>
 
   <properties>
-    <hadoop.version>3.1.0</hadoop.version>
+    <hadoop.version>3.1.2</hadoop.version>
     <maven.compiler.version>3.7.0</maven.compiler.version>
   </properties>
 
@@ -23,12 +21,73 @@
         <!-- 指定项目编译时的java版本和编码方式 -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>${maven.compiler.version}</version>
+        <version>3.7.0</version>
         <configuration>
-          <source>1.8</source>
           <target>1.8</target>
+          <source>1.8</source>
           <encoding>UTF-8</encoding>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.1.0</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>HdfsClientCli</mainClass> <!-- 指定入口类 -->
+              <addClasspath>true</addClasspath> <!-- 在jar的MF文件中生成classpath属性 -->
+              <classpathPrefix>lib/</classpathPrefix> <!-- classpath前缀,即依赖jar包的路径 -->
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.1.1</version>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>install</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <!-- 指定依赖包的输出路径，需与上方的classpathPrefix保持一致 -->
+              <outputDirectory>${project.build.directory}/lib</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.7</version>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <echo message="*** copy dep lib to client*** "/>
+                <copy todir="${project.basedir}/client/lib" overwrite="true">
+                  <fileset dir="${project.build.directory}/lib"/>
+                </copy>
+                <echo message="*** copy exec jar to client*** "/>
+                <copy todir="${project.basedir}/client" overwrite="true">
+                  <fileset file="${project.build.directory}/${artifactId}-${version}.jar"/>
+                </copy>
+                <echo message="*** copy conf file to client*** "/>
+                <copy todir="${project.basedir}/client/conf" overwrite="true">
+                  <fileset dir="${project.basedir}/conf"/>
+                </copy>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -75,5 +134,4 @@
       <version>1.1.2</version>
     </dependency>
   </dependencies>
-
 </project>
